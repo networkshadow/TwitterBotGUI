@@ -15,9 +15,11 @@ namespace TwitterBotGUI
     public partial class TwitterBotUI : Form
     {
         private TwitterService service;
+        private Config config;
         public TwitterBotUI(Config config)
         {
             InitializeComponent();
+            this.config = config;
             service = new TwitterService(config.ConsumerKey, config.ConsumerKeySecret, config.AccessToken, config.AccessTokenSecret);
         }
     }

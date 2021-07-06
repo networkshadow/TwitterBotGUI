@@ -11,3 +11,9 @@ C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\obj\Debug\TwitterBotGUI.
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\obj\Debug\TwitterBotGUI.csproj.CopyComplete
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\obj\Debug\TwitterBotGUI.exe
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\obj\Debug\TwitterBotGUI.pdb
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Hammock.ClientProfile.dll
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Newtonsoft.Json.dll
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\TweetSharp.dll
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Hammock.ClientProfile.pdb
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Newtonsoft.Json.xml
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\TweetSharp.pdb

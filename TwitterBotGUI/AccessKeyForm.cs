@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TwitterBotGUI.Objects;
@@ -14,6 +15,7 @@ namespace TwitterBotGUI
 {
     public partial class AccessKeyForm : Form
     {
+        private Config config;
         private static string _strConnection = "FileName=configData.litedb4; Mode=Exclusive;";
         public AccessKeyForm()
         {
@@ -55,6 +57,32 @@ namespace TwitterBotGUI
                 {
                     UpdateLiteDB();
                 }
+                else
+                {
+                    //Drop "config" data from LiteDB
+                    using (var db = new LiteDatabase(_strConnection))
+                    {
+                        db.DropCollection("config");
+                    }
+                }
+
+                //Initialize global conf variable
+                this.config = new Config
+                {
+                    ID = 1,
+                    ConsumerKey = txtConsumerKey.Text,
+                    ConsumerKeySecret = txtConsumerSecret.Text,
+                    AccessToken = txtAccessToken.Text,
+                    AccessTokenSecret = txtAccessTokenSecret.Text
+                };
+
+                //Close this form page
+                this.Close();
+
+                //Start UI in new thread
+                Thread thread = new Thread(OpenTwitterBotUI);
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
             }
             else
             {
@@ -76,6 +104,15 @@ namespace TwitterBotGUI
             {
                 var data = db.GetCollection<Config>("config");
 
+                var conf = new Config
+                {
+                    ID = 1,
+                    ConsumerKey = txtConsumerKey.Text,
+                    ConsumerKeySecret = txtConsumerSecret.Text,
+                    AccessToken = txtAccessToken.Text,
+                    AccessTokenSecret = txtAccessTokenSecret.Text
+                };
+
                 //Index the table
                 data.EnsureIndex(x => x.ID);
 
@@ -84,31 +121,15 @@ namespace TwitterBotGUI
 
                 if(numRows < 1)
                 {
-                    var conf = new Config
-                    {
-                        ID = 1,
-                        ConsumerKey = txtConsumerKey.Text,
-                        ConsumerKeySecret = txtConsumerSecret.Text,
-                        AccessToken = txtAccessToken.Text,
-                        AccessTokenSecret = txtAccessTokenSecret.Text
-                    };
-
                     data.Insert(conf);
                 }
                 else
                 {
-                    var conf = new Config
-                    {
-                        ID = 1,
-                        ConsumerKey = txtConsumerKey.Text,
-                        ConsumerKeySecret = txtConsumerSecret.Text,
-                        AccessToken = txtAccessToken.Text,
-                        AccessTokenSecret = txtAccessTokenSecret.Text
-                    };
-
                     data.Update(conf);
                 }
             }
         }
+
+        private void OpenTwitterBotUI() => Application.Run(new TwitterBotUI(this.config));
     }
 }
