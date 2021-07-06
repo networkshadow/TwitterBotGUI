@@ -90,6 +90,7 @@ namespace TwitterBotGUI
             }
         }
 
+        //Ensures all fields are completed
         private bool FieldsComplete()
         {
             return !String.IsNullOrEmpty(txtAccessToken.Text)
