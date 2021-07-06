@@ -133,12 +133,13 @@
             this.btnSubmit.TabIndex = 10;
             this.btnSubmit.Text = "Submit";
             this.btnSubmit.UseVisualStyleBackColor = true;
+            this.btnSubmit.Click += new System.EventHandler(this.btnSubmit_Click);
             // 
             // AccessKeyForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(333, 450);
+            this.ClientSize = new System.Drawing.Size(333, 385);
             this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.chkSaveKeys);
             this.Controls.Add(this.label4);
@@ -152,6 +153,7 @@
             this.Controls.Add(this.lblHeader);
             this.Name = "AccessKeyForm";
             this.Text = "Enter Keys and Secrets";
+            this.Load += new System.EventHandler(this.AccessKeyForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
