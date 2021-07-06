@@ -40,7 +40,7 @@ namespace TwitterBotGUI
 
                     //Fill fields automatically
                     txtConsumerKey.Text = result.ConsumerKey.ToString();
-                    txtConsumerSecret.Text = result.ConsumerKey.ToString();
+                    txtConsumerSecret.Text = result.ConsumerKeySecret.ToString();
                     txtAccessToken.Text = result.AccessToken.ToString();
                     txtAccessTokenSecret.Text = result.AccessTokenSecret.ToString();
 

@@ -17,3 +17,4 @@ C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\TweetSharp.dll
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Hammock.ClientProfile.pdb
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\Newtonsoft.Json.xml
 C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\bin\Debug\TweetSharp.pdb
+C:\Users\logan\source\repos\TwitterBotGUI\TwitterBotGUI\obj\Debug\TwitterBotGUI.TwitterBotUI.resources
