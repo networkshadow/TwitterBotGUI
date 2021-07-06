@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using TwitterBotGUI.Objects;
 using TweetSharp;
 using System.Net;
+using System.Threading;
 
 namespace TwitterBotGUI
 {
@@ -26,26 +27,45 @@ namespace TwitterBotGUI
 
         private void TwitterBotUI_Load(object sender, EventArgs e)
         {
-            var user = service.GetUserProfile(new GetUserProfileOptions()).ScreenName;
-            this.Text = $"@{user}'s Automation Dashboard";
-            //Console.WriteLine(user);
-            /*var _status = "Bot has officially started.";
-
-            service.SendTweet(new SendTweetOptions { Status = _status }, (tweet, response) =>
+            try
             {
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"<{DateTime.Now}> - Tweet Sent: {_status}");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"<ERROR> " + response.Error.Message);
-                    Console.ResetColor();
-                }
-            });*/
+                var user = service.GetUserProfile(new GetUserProfileOptions()).ScreenName;
+                this.Text = $"@{user}'s Automation Dashboard";
+            }
+            catch(Exception)
+            {
+                MessageBox.Show("Error authenticating user. Please check your keys and secrets and try again.");
+                this.Close();
+
+                Thread thread = new Thread(OpenAccessKeyPage);
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+            }
+        }
+
+        private void OpenAccessKeyPage() => Application.Run(new AccessKeyForm());
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var answer = MessageBox.Show("Are you sure you want to exit the application?", "Confirm Exit", MessageBoxButtons.OKCancel);
+            
+            if(answer == DialogResult.OK)
+            {
+                Application.Exit();
+            }            
+        }
+
+        private void changeProfileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var answer = MessageBox.Show("Are you sure you would like to change access?", "Confirm", MessageBoxButtons.OKCancel);
+
+            if(answer == DialogResult.OK)
+            {
+                this.Close();
+                Thread thread = new Thread(OpenAccessKeyPage);
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+            }
         }
     }
 }
