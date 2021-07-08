@@ -18,6 +18,9 @@ namespace TwitterBotGUI
     {
         private TwitterService service;
         private Config config;
+
+        private Thread autoTweetThr;
+        private Thread autoReplyThr;
         public TwitterBotUI(Config config)
         {
             InitializeComponent();
@@ -65,6 +68,30 @@ namespace TwitterBotGUI
                 Thread thread = new Thread(OpenAccessKeyPage);
                 thread.SetApartmentState(ApartmentState.STA);
                 thread.Start();
+            }
+        }
+
+        private void btnAddTweet_Click(object sender, EventArgs e)
+        {
+            var tweet = txtTweet.Text;
+
+            if (!String.IsNullOrWhiteSpace(tweet))
+            {
+                listViewAutoTweets.Items.Add(tweet);
+            }
+            else
+            {
+                MessageBox.Show("Please enter text for a tweet.");
+            }
+        }
+
+        private void btnClearAll_Click(object sender, EventArgs e)
+        {
+            var confirm = MessageBox.Show("Are you sure you want to clear all the auto-tweets?", "Confirm", MessageBoxButtons.YesNo);
+
+            if(confirm == DialogResult.Yes)
+            {
+                listViewAutoTweets.Items.Clear();
             }
         }
     }
