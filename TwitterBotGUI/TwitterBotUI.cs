@@ -124,8 +124,7 @@ namespace TwitterBotGUI
                 autoTweetThr = new Thread(AutoTweet);
                 autoTweetThr.Start();
 
-                btnStartAutoTweet.Enabled = false;
-                btnStopAutoTweet.Enabled = true;
+                ResetAutoTweetButtons();
             }
         }
 
@@ -155,8 +154,24 @@ namespace TwitterBotGUI
 
         private void btnStopAutoTweet_Click(object sender, EventArgs e)
         {
-            btnStartAutoTweet.Enabled = true;
-            btnStopAutoTweet.Enabled = false;
+            listViewConsole.Items.Add($"<{DateTime.Now}> - Auto-Tweeting Stopped").ForeColor = Color.Red;
+            autoTweetThr.Abort();
+
+            //Reset tab views
+            ResetAutoTweetButtons();
+        }
+
+        private void ResetAutoTweetButtons()
+        {
+            btnStartAutoTweet.Enabled = !btnStartAutoTweet.Enabled;
+            btnStopAutoTweet.Enabled = !btnStopAutoTweet.Enabled;
+            txtTweet.Enabled = !txtTweet.Enabled;
+            btnAddTweet.Enabled = !btnAddTweet.Enabled;
+            btnClearAll.Enabled = !btnClearAll.Enabled;
+            btnClear.Enabled = !btnClear.Enabled;
+            numericHours.Enabled = !numericHours.Enabled;
+            numericMinutes.Enabled = !numericMinutes.Enabled;
+            numericSeconds.Enabled = !numericSeconds.Enabled;
         }
 
         private void AutoTweet()
@@ -164,12 +179,10 @@ namespace TwitterBotGUI
             //Create timeout from selected time on form
             var timeout = new TimeSpan((int)numericHours.Value, (int)numericMinutes.Value, (int)numericSeconds.Value);
 
-            var tweets = this.allTweets;
-
             //Run indefinitely
             while (true)
             {
-                var tweet = tweets[new Random().Next(tweets.Count - 1)];
+                var tweet = this.allTweets[new Random().Next(this.allTweets.Count - 1)];
                 
                 SafeAddToConsole($"<{DateTime.Now}> - Tweeted: {tweet}");
 
