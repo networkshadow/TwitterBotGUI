@@ -16,11 +16,15 @@ namespace TwitterBotGUI
 {
     public partial class TwitterBotUI : Form
     {
+        private delegate void SafeCall(string txt);
+
         private TwitterService service;
         private Config config;
 
         private Thread autoTweetThr;
         private Thread autoReplyThr;
+
+        private List<string> allTweets;
         public TwitterBotUI(Config config)
         {
             InitializeComponent();
@@ -35,7 +39,7 @@ namespace TwitterBotGUI
                 var user = service.GetUserProfile(new GetUserProfileOptions()).ScreenName;
                 this.Text = $"@{user}'s Automation Dashboard";
             }
-            catch(Exception)
+            catch (Exception)
             {
                 MessageBox.Show("Error authenticating user. Please check your keys and secrets and try again.");
                 this.Close();
@@ -51,18 +55,18 @@ namespace TwitterBotGUI
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var answer = MessageBox.Show("Are you sure you want to exit the application?", "Confirm Exit", MessageBoxButtons.OKCancel);
-            
-            if(answer == DialogResult.OK)
+
+            if (answer == DialogResult.OK)
             {
                 Application.Exit();
-            }            
+            }
         }
 
         private void changeProfileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var answer = MessageBox.Show("Are you sure you would like to change access?", "Confirm", MessageBoxButtons.OKCancel);
 
-            if(answer == DialogResult.OK)
+            if (answer == DialogResult.OK)
             {
                 this.Close();
                 Thread thread = new Thread(OpenAccessKeyPage);
@@ -78,20 +82,113 @@ namespace TwitterBotGUI
             if (!String.IsNullOrWhiteSpace(tweet))
             {
                 listViewAutoTweets.Items.Add(tweet);
+                txtTweet.Clear();
             }
             else
             {
                 MessageBox.Show("Please enter text for a tweet.");
             }
+
+            txtTweet.Focus();
         }
 
         private void btnClearAll_Click(object sender, EventArgs e)
         {
             var confirm = MessageBox.Show("Are you sure you want to clear all the auto-tweets?", "Confirm", MessageBoxButtons.YesNo);
 
-            if(confirm == DialogResult.Yes)
+            if (confirm == DialogResult.Yes)
             {
                 listViewAutoTweets.Items.Clear();
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e) => txtTweet.Clear();
+
+        private void btnStartAutoTweet_Click(object sender, EventArgs e)
+        {
+            if (ValidAutoTweet())
+            {
+                //Get all tweets to auto-tweet
+                List<string> tweets = new List<string>();
+
+
+                for(var i = 0; i < listViewAutoTweets.Items.Count; i++)
+                {
+                    tweets.Add(listViewAutoTweets.Items[i].Text);
+                }
+
+                this.allTweets = tweets;
+
+                listViewConsole.Items.Add($"<{DateTime.Now}> - Auto-Tweeting Started!").ForeColor = Color.Green;
+                listViewConsole.ForeColor = Color.White;
+                autoTweetThr = new Thread(AutoTweet);
+                autoTweetThr.Start();
+
+                btnStartAutoTweet.Enabled = false;
+                btnStopAutoTweet.Enabled = true;
+            }
+        }
+
+        private bool ValidAutoTweet()
+        {
+            var isValid = true;
+            var message = "";
+
+            if (listViewAutoTweets.Items.Count < 1)
+            {
+                isValid = false;
+                message += "You must add at least one tweet.\n";
+            }
+            if (numericHours.Value == 0 && numericMinutes.Value == 0 && numericSeconds.Value == 0)
+            {
+                isValid = false;
+                message += "You must have a time between tweets.\n";
+            }
+
+            if (!isValid)
+            {
+                MessageBox.Show(message, "Error");
+            }
+
+            return isValid;
+        }
+
+        private void btnStopAutoTweet_Click(object sender, EventArgs e)
+        {
+            btnStartAutoTweet.Enabled = true;
+            btnStopAutoTweet.Enabled = false;
+        }
+
+        private void AutoTweet()
+        {
+            //Create timeout from selected time on form
+            var timeout = new TimeSpan((int)numericHours.Value, (int)numericMinutes.Value, (int)numericSeconds.Value);
+
+            var tweets = this.allTweets;
+
+            //Run indefinitely
+            while (true)
+            {
+                var tweet = tweets[new Random().Next(tweets.Count - 1)];
+                
+                SafeAddToConsole($"<{DateTime.Now}> - Tweeted: {tweet}");
+
+                //Do not repeat until timeout
+                Thread.Sleep(timeout);
+            }
+
+        }
+
+        private void SafeAddToConsole(string msg)
+        {
+            if (listViewConsole.InvokeRequired)
+            {
+                var d = new SafeCall(SafeAddToConsole);
+                listViewConsole.Invoke(d, new object[] { msg });
+            }
+            else
+            {
+                listViewConsole.Items.Add(msg);
             }
         }
     }
